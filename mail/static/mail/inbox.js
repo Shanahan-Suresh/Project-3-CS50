@@ -100,6 +100,14 @@ function load_email(id) {
     .then(response => response.json())
     .then(email => {
 
+      //Mark email as read
+      if(!email.read){
+        fetch('/emails/'+ id, {
+          method: 'PUT',
+          body: JSON.stringify({ read : true })
+        })
+      }
+      
       //set email view to email contents
       document.querySelector('#email-view').innerHTML = `
               Sender : <b>${email.sender}</b><br>
@@ -108,7 +116,23 @@ function load_email(id) {
               Subject : ${email.subject}<br>
               Body : ${email.body}<br><br>
           `;
+    
 
-    });
- 
+    // create new button
+    unreadButton = document.createElement('button');
+    unreadButton.className = "btn btn-sm btn-outline-primary";
+    unreadButton.innerHTML = "Mark as Unread"
+
+    //mark email as unread when clicked
+    unreadButton.addEventListener('click', function() {
+      fetch('/emails/' + email['id'], {
+        method: 'PUT',
+        body: JSON.stringify({ read : false })
+      })
+      .then(response => load_mailbox('inbox'))
+    })
+
+    document.querySelector('#email-view').appendChild(unreadButton);
+  });
+
 }
