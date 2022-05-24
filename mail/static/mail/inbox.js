@@ -16,6 +16,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -46,6 +47,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
 
   // Show the mailbox name
   view = document.querySelector('#emails-view');
@@ -68,16 +70,45 @@ function load_mailbox(mailbox) {
             div.setAttribute("class", "unread-email");
           }
           else{
-            console.log("Error");
+            console.log("Error retrieving read status");
           }
 
           div.innerHTML = `
-              Sender : <b>${email['sender']}</b><br>
-              Subject : ${email['subject']}<br>
-              Date : ${email['timestamp']}<br><br>
+              Sender : <b>${email.sender}</b><br>
+              Subject : ${email.subject}<br>
+              Date : ${email.timestamp}<br><br>
           `;
+
+          //make div clickable
+          div.addEventListener('click', () => load_email(email.id));
+          
           view.appendChild(div);
       });
     })
+  }
   
+    
+function load_email(id) {
+
+    // Show the email and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    document.querySelector('#email-view').style.display = 'block';
+
+    // Get email according to id
+    fetch('/emails/'+ id)
+    .then(response => response.json())
+    .then(email => {
+
+      //set email view to email contents
+      document.querySelector('#email-view').innerHTML = `
+              Sender : <b>${email.sender}</b><br>
+              Recipients : <b>${email.recipients}</b><br>
+              Date : ${email.timestamp}<br>
+              Subject : ${email.subject}<br>
+              Body : ${email.body}<br><br>
+          `;
+
+    });
+ 
 }
