@@ -51,4 +51,33 @@ function load_mailbox(mailbox) {
   view = document.querySelector('#emails-view');
   view.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
+    // Get latest emails according to mailbox
+    fetch('/emails/'+ mailbox)
+    .then(response => response.json())
+    .then(emails => {
+  
+      // generate div for each email
+      emails.forEach(email => {
+          let div = document.createElement('div');
+
+          //set div class based on read status
+          if (email.read === true) {
+            div.setAttribute("class", "read-email");
+          }
+          else if (email.read === false) {
+            div.setAttribute("class", "unread-email");
+          }
+          else{
+            console.log("Error");
+          }
+
+          div.innerHTML = `
+              Sender : <b>${email['sender']}</b><br>
+              Subject : ${email['subject']}<br>
+              Date : ${email['timestamp']}<br><br>
+          `;
+          view.appendChild(div);
+      });
+    })
+  
 }
