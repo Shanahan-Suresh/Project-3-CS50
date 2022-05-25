@@ -118,10 +118,10 @@ function load_email(id) {
           `;
     
 
-    // create new button
+    // create unread button
     unreadButton = document.createElement('button');
     unreadButton.className = "btn btn-sm btn-outline-primary";
-    unreadButton.innerHTML = "Mark as Unread"
+    unreadButton.innerHTML = "Mark as Unread";
 
     //mark email as unread when clicked
     unreadButton.addEventListener('click', function() {
@@ -133,6 +133,39 @@ function load_email(id) {
     })
 
     document.querySelector('#email-view').appendChild(unreadButton);
+
+
+    // create archive button
+    archiveButton = document.createElement('button');
+    archiveButton.className = "btn btn-sm btn-outline-primary";
+    if(email.archived == true){
+      archiveButton.innerHTML = "Unarchive";
+      
+      //set archive status to false
+      archiveButton.addEventListener('click', function() {
+        fetch('/emails/' + email['id'], {
+          method: 'PUT',
+          body: JSON.stringify({ archived : false })
+        })
+        .then(response => load_mailbox('archive'))
+      })
+
+    }
+    else{
+      archiveButton.innerHTML = "Archive";
+
+      //set archive status to true
+      archiveButton.addEventListener('click', function() {
+        fetch('/emails/' + email['id'], {
+          method: 'PUT',
+          body: JSON.stringify({ archived : true })
+        })
+        .then(response => load_mailbox('inbox'))
+      })
+
+    }
+
+    document.querySelector('#email-view').appendChild(archiveButton);
   });
 
 }
