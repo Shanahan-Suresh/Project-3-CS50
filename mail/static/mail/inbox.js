@@ -80,7 +80,7 @@ function load_mailbox(mailbox) {
           `;
 
           //make div clickable
-          div.addEventListener('click', () => load_email(email.id));
+          div.addEventListener('click', () => load_email(email.id, mailbox));
           
           view.appendChild(div);
       });
@@ -88,7 +88,7 @@ function load_mailbox(mailbox) {
   }
   
     
-function load_email(id) {
+function load_email(id, mailbox) {
 
     // Show the email and hide other views
     document.querySelector('#emails-view').style.display = 'none';
@@ -101,7 +101,7 @@ function load_email(id) {
     .then(email => {
 
       //Mark email as read
-      if(!email.read){
+      if(!email.read && mailbox != 'sent'){
         fetch('/emails/'+ id, {
           method: 'PUT',
           body: JSON.stringify({ read : true })
@@ -117,6 +117,8 @@ function load_email(id) {
               Body : ${email.body}<br><br>
           `;
     
+    //prevents button creation in 'sent' mailbox
+    if (mailbox != "sent"){
 
     // create unread button
     unreadButton = document.createElement('button');
@@ -195,8 +197,10 @@ function load_email(id) {
     
     document.querySelector('#email-view').appendChild(replyButton);
 
+    }
 
-    });
+
+  });
   
 
 }
