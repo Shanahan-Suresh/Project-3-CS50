@@ -166,6 +166,37 @@ function load_email(id) {
     }
 
     document.querySelector('#email-view').appendChild(archiveButton);
-  });
+
+    // create reply button
+    replyButton = document.createElement('button');
+    replyButton.className = "btn btn-sm btn-outline-primary";
+    replyButton.innerHTML = "Reply";
+      
+    //redrect to compose email on click
+    replyButton.addEventListener('click',  function() {
+      compose_email();
+
+      //pre-fill recipient
+      document.querySelector('#compose-recipients').value = email.sender;
+
+      //pre-fill subject
+      var subjectHeader = email.subject.substring(0,3);
+      if (subjectHeader == "RE:") {
+        document.querySelector('#compose-subject').value = email.subject;
+      }
+      else {
+      document.querySelector('#compose-subject').value = "RE: " + email.subject;
+      }
+
+      //pre-fill body
+      document.querySelector('#compose-body').value = `"On ${email.timestamp}, ${email.sender} wrote: \n${email.body}"`;
+
+    });
+    
+    document.querySelector('#email-view').appendChild(replyButton);
+
+
+    });
+  
 
 }
